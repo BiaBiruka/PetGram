@@ -1,0 +1,21 @@
+Para criar o package.json, dar um npm init -y
+
+pacotes:
+npm i 
+bcryptjs: biblioteca de manipulação de senhas p/ autenticação
+cors: receber requisições da mesma origem (localhost)
+dotenv: vaiáveis de ambiente (dominio de BD, porta de produção, porta de dev, etc)
+express: framework backend p/ criar a API
+express-validator: trabalha entre as requisições pra validar os dados
+jsonwebtoken: gera e verifica os tokens de autenticação
+mongoose: ferramenta pro MongoDB
+multer: upload de imagens
+
+nodemon:
+usado para simular um servidor local e dar autoreload.
+Sempre que tiver alguma mudança no back, ele recarrega o código pra deixar tudo atualizado
+npm i --save-dev nodemon
+Utiliza-se a flag --save-dev para dizer que é algo exclusivamente do ambiente de dev. dessa forma, quando fizer o deploy ele não vai
+
+no package.json:
+criar dentro de scripts "server": "nodemon ./app.js"
