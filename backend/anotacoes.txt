@@ -19,3 +19,12 @@ Utiliza-se a flag --save-dev para dizer que é algo exclusivamente do ambiente d
 
 no package.json:
 criar dentro de scripts "server": "nodemon ./app.js"
+
+na pasta routes, costuma-se criar um arquivo geral e um com as rotas de cada model
+
+para rodar o server, entrar na pasta backend antes de dar o npm run server (caso contrário, ele não acha o package.json)
+
+pasta middlewares:
+serve para evitar fazer as mesmas validações várias e várias vezes. 
+Por exemplo, no cadastro - se nome não chegou, se email não chegou... Isso pode ser repetido em outras partes do código
+Os middlewares são como "algo que ocorre entre a requisição e o acesso da rota"
