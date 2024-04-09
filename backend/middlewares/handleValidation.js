@@ -11,7 +11,7 @@ const validate = (request, response, next) => {
   // Se deu erro, cai aqui e trata cada erro unicamente
   const extractedErrors = [];
   errors.array().map((error) => {
-    extractedErrors.push(err.msg);
+    extractedErrors.push(error.msg);
   });
 
   // 422 é de falha na requisição
