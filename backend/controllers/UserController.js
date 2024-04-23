@@ -40,7 +40,8 @@ const register = async (req, res) => {
 
   // Se criou com sucesso, retorna o token baseado na função criada
   if (!newUser) {
-    res.status(422)
+    res
+      .status(422)
       .json({ errors: ['Algo deu errado. Tente novamente mais tarde'] });
     return;
   }
@@ -51,11 +52,38 @@ const register = async (req, res) => {
 };
 
 // Login
-const login = (req, res) => {
-  res.send("Login")
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  // Checa se o usuário existe
+  if (!user) {
+    res.status(400).json({ errors: ['Usuário não encontrado.'] });
+    return;
+  }
+
+  // Checa se a senha está correta
+  if (!bcrypt.compare(password, user.password)) {
+    res.status(422).json({ errors: ['Senha incorreta'] });
+    return;
+  }
+
+  // Se não caiu em nenhum if, retorna usuário e token assim como quando cria a conta
+  res.status(201).json({
+    _id: user._id,
+    profileImage: user.profileImage,
+    token: generateToken(user._id),
+  });
+};
+
+// Pegar usuário logado
+const getCurrentUser = async (req, res) => {
+  const user = req.user
+  res.status(200).json(user)
 }
 
 module.exports = {
   register,
-  login
+  login,
+  getCurrentUser
 };

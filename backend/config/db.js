@@ -8,7 +8,7 @@ const dbPass = process.env.DB_PASS;
 const conn = async () => {
   try {
     const dbConn = await mongoose.connect(
-      `mongodb+srv://${dbUser}:${dbPass}@petgram.yq54d71.mongodb.net/?retryWrites=true&w=majority&appName=PetGram`
+      `mongodb+srv://${dbUser}:${dbPass}@petgram.yq54d71.mongodb.net/`
     );
     console.log('Conectado com sucesso');
     return dbConn;
