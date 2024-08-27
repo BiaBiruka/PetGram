@@ -78,12 +78,18 @@ const login = async (req, res) => {
 
 // Pegar usuário logado
 const getCurrentUser = async (req, res) => {
-  const user = req.user
-  res.status(200).json(user)
-}
+  const user = req.user;
+  res.status(200).json(user);
+};
+
+// Atualizar usuário
+const update = async (req, res) => {
+  res.send('Update');
+};
 
 module.exports = {
   register,
   login,
-  getCurrentUser
+  getCurrentUser,
+  update,
 };
