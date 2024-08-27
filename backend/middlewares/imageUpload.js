@@ -17,7 +17,7 @@ const imageStorage = multer.diskStorage({
     // Função de callback
     cb(null, `uploads/${folder}/`);
   },
-  filename: (req, file, cd) => {
+  filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); //xxxxx020520204.png
     // Em um sistema maior, o ideal seria utilizar por exemplo uuid para gerar ids aleatórios
     // Isso evita o risco de repetir os nomes e acabar sobreescrevendo algo

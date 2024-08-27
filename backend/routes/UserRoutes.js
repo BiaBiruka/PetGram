@@ -7,6 +7,7 @@ const {
   login,
   getCurrentUser,
   update,
+  getUserById,
 } = require('../controllers/UserController');
 
 // Middleware
@@ -33,5 +34,6 @@ router.put(
   imageUpload.single('profileImage'),
   update
 );
+router.get('/:id', getUserById);
 
 module.exports = router;

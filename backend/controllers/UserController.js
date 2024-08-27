@@ -2,6 +2,7 @@ const User = require('../models/User');
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -84,7 +85,61 @@ const getCurrentUser = async (req, res) => {
 
 // Atualizar usuário
 const update = async (req, res) => {
-  res.send('Update');
+  const { name, password, bio } = req.body;
+
+  let profileImage = null;
+
+  // Checa se chegou algo
+  if (req.file) {
+    profileImage = req.file.filename;
+  }
+  const reqUser = req.user;
+
+  //transforma o id do usuário em um "objeto de ID" e remove a senha pq esse request nn precisa
+  const user = await User.findById(
+    new mongoose.Types.ObjectId(reqUser._id)
+  ).select('-password');
+
+  if (name) {
+    user.name = name;
+  }
+  if (password) {
+    const salt = await bcrypt.genSalt();
+    const passWordHash = await bcrypt.hash(password, salt);
+    user.password = passWordHash;
+  }
+  if (profileImage) {
+    user.profileImage = profileImage;
+  }
+  if (bio) {
+    user.bio = bio;
+  }
+
+  await user.save();
+
+  res.status(200).json(user);
+};
+
+// Pegar usuário pelo ID (ver perfil de outros)
+const getUserById = async (req, res) => {
+  // Pega da URL pq é um get
+  const { id } = req.params;
+
+  // Checa se usuário existe
+  try {
+    const user = await User.findById(new mongoose.Types.ObjectId(id)).select(
+      '-password'
+    );
+
+    if (!user) {
+      res.status(404).json({ errors: ['Usuário não encontrado'] });
+      return;
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ errors: ['Usuário não encontrado'] });
+    return;
+  }
 };
 
 module.exports = {
@@ -92,4 +147,5 @@ module.exports = {
   login,
   getCurrentUser,
   update,
+  getUserById,
 };
