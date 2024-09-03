@@ -74,9 +74,105 @@ const getUserPhotos = async (req, res) => {
   return res.status(200).json(photos);
 };
 
+// Pegar fotos por ID
+const getPhotoById = async (req, res) => {
+  const { id } = req.params;
+  const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
+
+  if (!photo) {
+    res.status(404).json({ erros: ['Foto não encontrada'] });
+    return;
+  }
+
+  res.status(200).json(photo);
+};
+
+// Alterar foto (na verdade só o título)
+const updatePhoto = async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  const reqUser = req.user;
+
+  const photo = await Photo.findById(id);
+
+  if (!photo) {
+    res.status(404).json({ erros: ['Foto não encontrada'] });
+    return;
+  }
+
+  if (!photo.userId.equals(reqUser._id)) {
+    res
+      .status(422)
+      .json({ errors: ['Ocorreu um erro. Tente novamente mais tarde'] });
+    return;
+  }
+
+  if (title) {
+    photo.title = title;
+    await photo.save();
+  }
+  res.status(200).json({ photo, message: 'Foto atualizada com sucesso!' });
+};
+
+// Like na foto
+const likePhoto = async (req, res) => {
+  const { id } = req.params;
+
+  const reqUser = req.user;
+
+  const photo = await Photo.findById(id);
+
+  if (!photo) {
+    res.status(404).json({ erros: ['Foto não encontrada'] });
+    return;
+  }
+
+  // Checa se já curtiu a foto
+  // TODO: função de remover o like
+  if (photo.likes.includes(reqUser._id)) {
+    res.status(422).json({ errors: ['Você já curtiu essa foto'] });
+    return;
+  }
+
+  photo.likes.push(reqUser._id);
+  photo.save();
+  res
+    .status(200)
+    .json({ photoId: id, userId: reqUser._id, message: 'Foto curtida!' });
+};
+
+// Comentar foto
+const commentPhoto = async (req, res) => {
+  const { id } = req.params;
+  const { comment } = req.body;
+  const reqUser = req.user;
+  const photo = await Photo.findById(id);
+  const user = await User.findById(reqUser._id);
+
+  if (!photo) {
+    res.status(404).json({ erros: ['Foto não encontrada'] });
+    return;
+  }
+
+  const userComment = {
+    comment,
+    userName: user.name,
+    userImage: user.profileImage,
+    userId: user._id,
+  };
+  photo.comments.push(userComment);
+  await photo.save();
+  res.status(200).json({ userComment, message: 'Comentário enviado!' });
+};
+
 module.exports = {
   insertPhoto,
   deletePhoto,
   getAllPhotos,
-  getUserPhotos
+  getUserPhotos,
+  getPhotoById,
+  updatePhoto,
+  likePhoto,
+  commentPhoto,
 };
