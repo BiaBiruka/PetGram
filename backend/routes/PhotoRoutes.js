@@ -11,6 +11,7 @@ const {
   updatePhoto,
   likePhoto,
   commentPhoto,
+  searchPhotos,
 } = require('../controllers/PhotoController');
 
 // Middleware
@@ -37,6 +38,7 @@ router.delete('/:id', authGuard, deletePhoto);
 
 router.get('/', authGuard, getAllPhotos);
 router.get('/user/:id', authGuard, getUserPhotos);
+router.get('/search', authGuard, searchPhotos);
 router.get('/:id', authGuard, getPhotoById); // A ordem importa!!! Se colocar antes da do usuário, vai achar que ID de usuário é foto
 
 router.put('/:id', authGuard, photoUpdateValidation(), validate, updatePhoto);

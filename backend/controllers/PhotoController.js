@@ -166,6 +166,15 @@ const commentPhoto = async (req, res) => {
   res.status(200).json({ userComment, message: 'Comentário enviado!' });
 };
 
+// Buscar imagem pelo título
+const searchPhotos = async (req, res) => {
+  const { q } = req.query;
+
+  // Argumento "q" (query do que se procura) está em algum lugar da string
+  const photos = await Photo.find({ title: new RegExp(q, 'i') }).exec();
+  return res.status(200).json(photos);
+};
+
 module.exports = {
   insertPhoto,
   deletePhoto,
@@ -175,4 +184,5 @@ module.exports = {
   updatePhoto,
   likePhoto,
   commentPhoto,
+  searchPhotos,
 };

@@ -1,7 +1,7 @@
 Para criar o package.json, dar um npm init -y
 
 pacotes:
-npm i 
+npm i...
 bcryptjs: biblioteca de manipulação de senhas p/ autenticação
 cors: receber requisições da mesma origem (localhost)
 dotenv: vaiáveis de ambiente (dominio de BD, porta de produção, porta de dev, etc)
