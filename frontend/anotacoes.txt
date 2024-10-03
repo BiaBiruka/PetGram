@@ -3,3 +3,4 @@ npm i...
 react-icons: icones
 react-router-dom: rotas das páginas
 @reduxjs/toolkit: redux-toolkit. Gerência dos estados de forma mais limpa do que com redux puro
+react-redux: biblioteca do reducer em si
