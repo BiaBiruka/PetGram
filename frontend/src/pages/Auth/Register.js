@@ -4,6 +4,7 @@ import './index.css';
 
 // Components
 import { Link } from 'react-router-dom';
+import Message from '../../components/Message';
 
 // Redux
 import { register, reset } from '../../slices/authSlice';
@@ -66,7 +67,12 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           value={confirmPassword || ''}
         />
-        <input type='submit' value='Submit' />
+        {!loading ? (
+          <input type='submit' value='Submit' />
+        ) : (
+          <input type='submit' disabled value='Loading...' />
+        )}
+        {error && <Message msg={error} type='error' />}
       </form>
       <p>
         Already a PetGrammer? <Link to='/login'>Login now</Link>!
