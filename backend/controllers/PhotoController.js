@@ -20,12 +20,12 @@ const insertPhoto = async (req, res) => {
 
   // Se criou com sucesso, retorna
   if (!newPhoto) {
-    res.status(422).json({ errors: ['Houve um problema ao inserir a imagem'] });
+    res.status(422).json({ errors: ['Something went wrong while trying to add image.'] });
   }
 
   res.status(201).json(newPhoto);
 
-  res.send('Foto inserida');
+  res.send('Image added.');
 };
 
 // Apagar foto
@@ -36,21 +36,21 @@ const deletePhoto = async (req, res) => {
   try {
     const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
     if (!photo) {
-      return res.status(404).json({ errors: ['Imagem não encontrada'] });
+      return res.status(404).json({ errors: ['Photo not found.'] });
     }
     // Checa se a foto é mesmo daquele usuário
     if (!photo.userId.equals(reqUser._id)) {
       return res
         .status(422)
-        .json({ errors: ['Ocorreu um erro. Tente novamente mais tarde'] });
+        .json({ errors: ['Something went wrong. Please try again later.'] });
     }
 
     await Photo.findByIdAndDelete(photo._id);
     return res
       .status(200)
-      .json({ id: photo._id, message: 'Imagem excluída com sucesso!' });
+      .json({ id: photo._id, message: 'Photo deleted successfully!' });
   } catch (error) {
-    return res.status(500).json({ errors: ['Algo deu errado.'] });
+    return res.status(500).json({ errors: ['Something went wrong.'] });
   }
 };
 
@@ -80,7 +80,7 @@ const getPhotoById = async (req, res) => {
   const photo = await Photo.findById(new mongoose.Types.ObjectId(id));
 
   if (!photo) {
-    res.status(404).json({ erros: ['Foto não encontrada'] });
+    res.status(404).json({ erros: ['Photo not found.'] });
     return;
   }
 
@@ -97,14 +97,14 @@ const updatePhoto = async (req, res) => {
   const photo = await Photo.findById(id);
 
   if (!photo) {
-    res.status(404).json({ erros: ['Foto não encontrada'] });
+    res.status(404).json({ erros: ['Photo not found.'] });
     return;
   }
 
   if (!photo.userId.equals(reqUser._id)) {
     res
       .status(422)
-      .json({ errors: ['Ocorreu um erro. Tente novamente mais tarde'] });
+      .json({ errors: ['Something wwent wrong. Please try again later.'] });
     return;
   }
 
@@ -112,7 +112,7 @@ const updatePhoto = async (req, res) => {
     photo.title = title;
     await photo.save();
   }
-  res.status(200).json({ photo, message: 'Foto atualizada com sucesso!' });
+  res.status(200).json({ photo, message: 'Photo updates successfully!' });
 };
 
 // Like na foto
@@ -124,14 +124,14 @@ const likePhoto = async (req, res) => {
   const photo = await Photo.findById(id);
 
   if (!photo) {
-    res.status(404).json({ erros: ['Foto não encontrada'] });
+    res.status(404).json({ erros: ['Photo not found.'] });
     return;
   }
 
   // Checa se já curtiu a foto
   // TODO: função de remover o like
   if (photo.likes.includes(reqUser._id)) {
-    res.status(422).json({ errors: ['Você já curtiu essa foto'] });
+    res.status(422).json({ errors: ["You've already liked this photo."] });
     return;
   }
 
@@ -139,7 +139,7 @@ const likePhoto = async (req, res) => {
   photo.save();
   res
     .status(200)
-    .json({ photoId: id, userId: reqUser._id, message: 'Foto curtida!' });
+    .json({ photoId: id, userId: reqUser._id, message: 'Photo liked!' });
 };
 
 // Comentar foto
@@ -151,7 +151,7 @@ const commentPhoto = async (req, res) => {
   const user = await User.findById(reqUser._id);
 
   if (!photo) {
-    res.status(404).json({ erros: ['Foto não encontrada'] });
+    res.status(404).json({ erros: ['Photo not found.'] });
     return;
   }
 
@@ -163,7 +163,7 @@ const commentPhoto = async (req, res) => {
   };
   photo.comments.push(userComment);
   await photo.save();
-  res.status(200).json({ userComment, message: 'Comentário enviado!' });
+  res.status(200).json({ userComment, message: 'Comment posted!' });
 };
 
 // Buscar imagem pelo título

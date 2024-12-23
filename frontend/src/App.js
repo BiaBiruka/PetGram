@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 
 // Páginas
 import Home from './pages/Home';
-import Login from './pages/Auth';
+import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 
 // Componentes
@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 
 // Hooks
 import { useAuth } from './hooks/useAuth';
+import EditProfile from './pages/EditProfile/EditProfile';
 
 function App() {
   const { auth, loading } = useAuth();
@@ -34,7 +35,14 @@ function App() {
               path='/login'
               element={!auth ? <Login /> : <Navigate to='/' />}
             />
-            <Route path='/register' element={!auth ? <Register /> : <Navigate to='/' />} />
+            <Route
+              path='/register'
+              element={!auth ? <Register /> : <Navigate to='/' />}
+            />
+            <Route
+              path='/profile'
+              element={auth ? <EditProfile /> : <Navigate to='/login' />}
+            />
           </Routes>
         </div>
         <Footer />

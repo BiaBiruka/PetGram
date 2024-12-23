@@ -11,7 +11,7 @@ const authGuard = async (req, res, next) => {
   // Checa se tem token
   // O if do token já vai dar errado se não tem autorização, então só uma validação já basta
   if (!token) {
-    return res.status(401).json({ errors: ['Acesso negado.'] });
+    return res.status(401).json({ errors: ['Access denied.'] });
   }
 
   // Checa se token é válido
@@ -23,7 +23,7 @@ const authGuard = async (req, res, next) => {
 
     next();
   } catch {
-    return res.status(401).json({ errors: ['Token inválido.'] });
+    return res.status(401).json({ errors: ['Inavlid token.'] });
   }
 };
 

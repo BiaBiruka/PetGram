@@ -22,7 +22,7 @@ const register = async (req, res) => {
   // findOne() vem do mongoose
   const user = await User.findOne({ email });
   if (user) {
-    res.status(422).json({ errors: ['Email já cadastrado'] });
+    res.status(422).json({ errors: ['Email already in use.'] });
     return;
   }
 
@@ -43,7 +43,7 @@ const register = async (req, res) => {
   if (!newUser) {
     res
       .status(422)
-      .json({ errors: ['Algo deu errado. Tente novamente mais tarde'] });
+      .json({ errors: ['Something went wrong. Please try again later.'] });
     return;
   }
   res.status(201).json({
@@ -59,13 +59,13 @@ const login = async (req, res) => {
 
   // Checa se o usuário existe
   if (!user) {
-    res.status(400).json({ errors: ['Usuário não encontrado.'] });
+    res.status(400).json({ errors: ['User not found.'] });
     return;
   }
 
   // Checa se a senha está correta
-  if (!bcrypt.compare(password, user.password)) {
-    res.status(422).json({ errors: ['Senha incorreta'] });
+  if (!(await bcrypt.compare(password, user.password))) {
+    res.status(422).json({ errors: ['Wrong password.'] });
     return;
   }
 

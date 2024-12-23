@@ -31,7 +31,7 @@ const imageUpload = multer({
     if (!file.originalname.match(/\.(png|jpg)$/)) {
       return cb(
         new Error(
-          'Formato de imagem incompatível. Envie um arquivo de extendsão .png ou .jpg.'
+          'This file extension is not accepted. Please upload a .png or .jpg file.'
         )
       );
     }
