@@ -86,7 +86,8 @@ const getCurrentUser = async (req, res) => {
 // Atualizar usuário
 const update = async (req, res) => {
   const { name, password, bio } = req.body;
-
+  console.log(req.body);
+  console.log('chegou');
   let profileImage = null;
 
   // Checa se chegou algo
@@ -132,12 +133,12 @@ const getUserById = async (req, res) => {
     );
 
     if (!user) {
-      res.status(404).json({ errors: ['Usuário não encontrado'] });
+      res.status(404).json({ errors: ['User not found'] });
       return;
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(404).json({ errors: ['Usuário não encontrado'] });
+    res.status(404).json({ errors: ['User not found'] });
     return;
   }
 };

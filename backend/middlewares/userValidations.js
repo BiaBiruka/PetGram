@@ -48,8 +48,7 @@ const loginValidation = () => {
 const userUpdateValidation = () => {
   return [
     body('name')
-      .isString()
-      .withMessage('Name cannot be empty.')
+      .optional()
       .isLength({ min: 3 })
       .withMessage('Name must be at least 3 characters long.'),
     body('password')

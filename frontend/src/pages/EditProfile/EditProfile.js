@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import './EditProfile.css';
 
 import { uploads } from '../../utils/config';
-import { profile, resetMessage } from '../../slices/userSlice';
+import { profile, resetMessage, updateProfile } from '../../slices/userSlice';
 
 import Message from '../../components/Message';
 
@@ -17,7 +17,9 @@ const EditProfile = () => {
 
   const dispatch = useDispatch();
 
-  const { user, message, error, loading } = useSelector((state) => state.user);
+  const { user, message, error, loading, success } = useSelector(
+    (state) => state.user
+  );
 
   useEffect(() => {
     dispatch(profile());
@@ -31,8 +33,31 @@ const EditProfile = () => {
     }
   }, [user]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const userData = {
+      name,
+    };
+
+    if (image) {
+      userData.profileImage = image;
+    }
+
+    if (bio) {
+      userData.bio = bio;
+    }
+
+    if (pass) {
+      userData.password = pass;
+    }
+
+    const formData = new FormData();
+    Object.keys(userData).forEach((key) => formData.append(key, userData[key]));
+    dispatch(updateProfile(formData));
+    setTimeout(() => {
+      dispatch(resetMessage());
+    }, 2000);
   };
 
   const handleFile = (e) => {
@@ -88,7 +113,13 @@ const EditProfile = () => {
             value={pass || ''}
           />
         </label>
-        <input type='submit' value='Save changes' />
+        {!loading ? (
+          <input type='submit' value='Save changes' />
+        ) : (
+          <input type='submit' disabled value='Loading...' />
+        )}
+        {error && <Message msg={error} type='error' />}
+        {success && message && <Message msg={message} type='success' />}
       </form>
     </div>
   );

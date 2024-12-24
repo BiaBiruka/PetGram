@@ -18,10 +18,10 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 
 // diretório de upload de imagens
 // define que são arquivos estáticos dentro de uma pasta Uploads no diretório
-app.use('/uploads', express.static(path.join(__dirname, "/uplodas")));
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // conexão com o BD
-require("./config/db.js")
+require('./config/db.js');
 
 // rotas
 const router = require('./routes/Router.js');
