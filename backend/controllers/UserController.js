@@ -86,8 +86,6 @@ const getCurrentUser = async (req, res) => {
 // Atualizar usuário
 const update = async (req, res) => {
   const { name, password, bio } = req.body;
-  console.log(req.body);
-  console.log('chegou');
   let profileImage = null;
 
   // Checa se chegou algo

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import photoService from '../services/photoService';
+import { act } from 'react';
 
 const initialState = {
   photos: [],
@@ -16,8 +17,8 @@ export const publishPhoto = createAsyncThunk(
     const token = thunkAPI.getState().auth.user.token;
     const data = await photoService.publishPhoto(photo, token);
 
-    if (data.erros) {
-      return thunkAPI.rejectWithValue(data.erros[0]);
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
     }
 
     return data;
@@ -25,18 +26,92 @@ export const publishPhoto = createAsyncThunk(
 );
 
 export const getUserPhotos = createAsyncThunk(
-    'photo/userPhotos',
-    async (id, thunkAPI) => {
-      const token = thunkAPI.getState().auth.user.token;
-      const data = await photoService.getUserPhotos(id, token);
-  
-      if (data.erros) {
-        return thunkAPI.rejectWithValue(data.erros[0]);
-      }
-  
-      return data;
+  'photo/userPhotos',
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    const data = await photoService.getUserPhotos(id, token);
+
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
     }
-  );
+    return data;
+  }
+);
+
+export const deletePhoto = createAsyncThunk(
+  'photo/delete',
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    const data = await photoService.deletePhoto(id, token);
+
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+    return data;
+  }
+);
+
+export const updatephoto = createAsyncThunk(
+  'photo/update',
+  async (photoData, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    const data = await photoService.updatePhoto(
+      { title: photoData.title },
+      photoData.id,
+      token
+    );
+
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+    return data;
+  }
+);
+
+export const getPhotoById = createAsyncThunk(
+  'photo/getphoto',
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.getPhotoById(id, token);
+
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+    return data;
+  }
+);
+
+export const likePhoto = createAsyncThunk(
+  'photo/like',
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.likePhoto(id, token);
+
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+    return data;
+  }
+);
+
+export const commentPhoto = createAsyncThunk(
+  'photo/comment',
+  async (commentData, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.commentPhoto(
+      { comment: commentData.comment },
+      commentData.id,
+      token
+    );
+    if (data.errors) {
+      return thunkAPI.rejectWithValue(data.errors[0]);
+    }
+    return data;
+  }
+);
 
 export const photoSlice = createSlice({
   name: 'photo',
@@ -44,22 +119,22 @@ export const photoSlice = createSlice({
   reducers: {
     resetMessage: (state) => {
       state.message = null;
-      state.error = false;
+      state.error = null;
       state.success = false;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(publishPhoto.pending, (state) => {
       state.loading = true;
-      state.error = false;
+      state.error = null;
     });
     builder.addCase(publishPhoto.fulfilled, (state, action) => {
       state.loading = false;
-      state.error = false;
+      state.error = null;
       state.success = true;
       state.photo = action.payload;
       state.photos.unshift(state.photo);
-      state.message = "Photo published successfulyy!"
+      state.message = 'Photo published successfully!';
     });
     builder.addCase(publishPhoto.rejected, (state, action) => {
       state.loading = false;
@@ -68,15 +143,95 @@ export const photoSlice = createSlice({
       state.photo = {};
     });
     builder.addCase(getUserPhotos.pending, (state) => {
-        state.loading = true;
-        state.error = false;
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(getUserPhotos.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photos = action?.payload;
+    });
+    builder.addCase(deletePhoto.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(deletePhoto.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photos = state.photos.filter((photo) => {
+        return photo._id !== action.payload.id;
       });
-      builder.addCase(getUserPhotos.fulfilled, (state, action) => {
-        state.loading = false;
-        state.error = false;
-        state.success = true;
-        state.photo = action.payload;
+      state.message = action.payload.message;
+    });
+    builder.addCase(deletePhoto.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.photo = {};
+    });
+
+    builder.addCase(updatephoto.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(updatephoto.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photos.map((photo) => {
+        if (photo._id === action.payload.photo._id) {
+          return (photo.title = action.payload.photo.title);
+        }
+        return photo;
       });
+      state.message = action.payload.message;
+    });
+    builder.addCase(updatephoto.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+      state.photo = {};
+    });
+    builder.addCase(getPhotoById.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(getPhotoById.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photo = action?.payload;
+    });
+    builder.addCase(likePhoto.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      if (state.photo.likes) {
+        state.photo.likes.push(action.payload.userId);
+      }
+      state.photos.map((photo) => {
+        if (photo._id === action.payload.photoId) {
+          return photo.likes.push(action.payload.userId);
+        }
+        return photo;
+      });
+      state.message = action.payload.message;
+    });
+    builder.addCase(likePhoto.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(commentPhoto.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.message = action.payload.message;
+      state.photo.comments.unshift(action.payload.userComment);
+    });
+    builder.addCase(commentPhoto.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
   },
 });
 
