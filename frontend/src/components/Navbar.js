@@ -20,6 +20,7 @@ import { logout, reset } from '../slices/authSlice';
 const Navbar = () => {
   const { auth } = useAuth();
   const { user } = useSelector((state) => state.auth);
+  const [query, setQuery] = useState('');
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,12 +32,26 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+    if (query) {
+      return navigate(`/search?q=${query}`);
+    }
+  };
+
   return (
     <nav id='nav'>
       <Link to='/'>PetGram</Link>
-      <form id='search-form'>
+      <form id='search-form' onSubmit={handleSearch}>
         <BsSearch id='search-form-svg' />
-        <input type='text' placeholder='Search' id='search-input' />
+        <input
+          type='text'
+          placeholder='Search'
+          id='search-input'
+          onChange={(e) => setQuery(e.target.value)}
+          value={query || ''}
+        />
       </form>
       <ul id='nav-links'>
         {auth ? (

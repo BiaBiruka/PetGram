@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import photoService from '../services/photoService';
-import { act } from 'react';
 
 const initialState = {
   photos: [],
@@ -109,6 +108,28 @@ export const commentPhoto = createAsyncThunk(
     if (data.errors) {
       return thunkAPI.rejectWithValue(data.errors[0]);
     }
+    return data;
+  }
+);
+
+export const getAllPhotos = createAsyncThunk(
+  'photo/getall',
+  async (_, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.getAllPhotos(token);
+
+    return data;
+  }
+);
+
+export const searchPhoto = createAsyncThunk(
+  'photo/search',
+  async (query, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+
+    const data = await photoService.searchPhoto(query, token);
+
     return data;
   }
 );
@@ -231,6 +252,26 @@ export const photoSlice = createSlice({
     builder.addCase(commentPhoto.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    });
+    builder.addCase(getAllPhotos.pending, (state) => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(getAllPhotos.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photos = action?.payload;
+    });
+    builder.addCase(searchPhoto.pending, (state) => {
+      state.loading = true;
+      state.error = false;
+    });
+    builder.addCase(searchPhoto.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.success = true;
+      state.photos = action?.payload;
     });
   },
 });
